@@ -72,7 +72,7 @@ if ! command -v code &> /dev/null; then
   echo "❗ VS Code CLI not found."
   echo "   Open VS Code → Cmd+Shift+P → 'Shell Command: Install code command in PATH'"
   echo "   Then re-run this script to auto-install the PlatformIO extension."
-  exit 1
+  
 fi
 
 # --- Install PlatformIO VS Code extension ---
@@ -83,16 +83,18 @@ else
   echo "✅ PlatformIO VS Code extension already installed."
 fi
 
-# --- Clone your project (lineScale) ---
-mkdir -p ~/Projects
-cd ~/Projects
+# --- Clone all public GitHub repos ---
+mkdir -p ~/Documents/GitHub
+cd ~/Documents/GitHub
 
-if [ ! -d "lineScale" ]; then
-  echo "📥 Cloning your lineScale project..."
-  git clone https://github.com/beniseman/lineScale.git
-else
-  echo "✅ Project 'lineScale' already exists."
-fi
-
-echo "🎉 Setup complete! Open your project with:"
-echo "   code ~/Projects/lineScale"
+curl -s "https://api.github.com/users/beniseman/repos?per_page=100" | \
+  grep -o 'https://[^"]*\.git' | \
+  while read repo; do
+    name=$(basename "$repo" .git)
+    if [ ! -d "$name" ]; then
+      echo "📥 Cloning $name..."
+      git clone "$repo"
+    else
+      echo "✅ $name already exists, skipping."
+    fi
+  done
