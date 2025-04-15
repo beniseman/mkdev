@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🛠️ Setting up your Mac for PlatformIO + VS Code..."
+echo "🛠️ Setting up your Mac for embedded development..."
 
 # --- Install Homebrew ---
 if ! command -v brew &> /dev/null; then
@@ -12,22 +12,32 @@ fi
 
 brew update
 
-# --- Install CLI tools ---
+# --- Install core CLI tools ---
 brew install git python
 
 # --- Install GUI apps ---
 brew install --cask visual-studio-code
 brew install --cask github
+brew install --cask arduino  # optional — PlatformIO doesn’t need it, but you might
 
-# --- Install PlatformIO CLI (optional, VS Code handles it too) ---
+# --- Install PlatformIO CLI (optional but useful) ---
 pip3 install -U platformio
 
-# --- Install PlatformIO extension in VS Code ---
+# --- Add code to PATH if not already there ---
+if ! command -v code &> /dev/null; then
+  echo "❗ Open VS Code, press Cmd+Shift+P and run: 'Shell Command: Install code command in PATH'"
+fi
+
+# --- Install PlatformIO VS Code extension ---
 code --install-extension platformio.platformio-ide
 
-# --- Optional: Clone your project(s) ---
+# --- Clone your project(s) ---
 mkdir -p ~/Projects
 cd ~/Projects
-git clone https://github.com/beniseman/lineScale.git
 
-echo "✅ Done! Open VS Code, load your project folder, and you're good to go."
+if [ ! -d "lineScale" ]; then
+  git clone https://github.com/beniseman/lineScale.git
+fi
+
+echo "✅ All done! Open VS Code and start coding:"
+echo "   cd ~/Projects/lineScale && code ."
